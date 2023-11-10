@@ -1,0 +1,128 @@
+/* Reseteo de estilos */
+* {
+    margin: 0px;
+    padding: 0px;
+    outline: 2px dashed black;
+}
+
+h1 {
+    color: orange;
+    background-color: purple;
+    margin: 16px;
+    text-align: center;
+}
+
+p {
+    background-color: orange;
+    padding: 16px;
+}
+
+a {
+    color: orange;
+    background-color: purple;
+    display: inline-block;
+    height: 48px;
+}
+
+button {
+
+    width: 128px;
+}
+
+
+
+.customLink {
+    background-color: dodgerblue;
+    color: goldenrod;
+    padding: 12px;
+}
+
+.roundedLink {
+    border-radius: 12px;
+    border: 2px solid black;
+}
+
+
+#imageContainer {
+    height: 48px;
+    width: 48px;
+    background-color: fuchsia;
+    border-radius: 50%;
+}
+
+.title {
+    color: red;
+}
+
+h3.title {
+    background-color: dodgerblue;
+}
+
+
+#card {
+
+    width: 256px;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+#card>h2 {
+    background-color: darkcyan;
+}
+
+#card img {
+    height: 100px;
+}
+
+
+input[type="text"] {
+    background-color: rgba(255, 0, 0, 0.329);
+    height: 48px;
+}
+
+input[type="date"] {
+    background-color: rgba(0, 162, 255, 0.329);
+    padding: 12px;
+    border: 2px solid red;
+}
+
+#sizes p {
+    margin: 16px;
+    font-size: 1.4em;
+    height: 128px;
+    overflow: scroll;
+    margin-bottom: 48px;
+    border-top: 4px groove red;
+    border-bottom: 4px dashed greenyellow;
+}
+
+body {
+    background-image: url(./BMW\ Williams.jpg);
+    background-size: cover;
+}
+
+.box{
+    height: 64px;
+    width: 96px;
+    background-color: darkred;
+    margin: 16px;
+    padding: 16px;
+    border:8px solid fuchsia;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align:bottom;
+
+}
+
+.box2{
+    height: 128px;
+    width: 96px;
+    background-color: rgb(0, 97, 139);
+    margin: 16px;
+    padding: 16px;
+    border:8px solid fuchsia;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+
+}
