@@ -1,0 +1,131 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    outline: 2px solid black;
+}
+
+.element {
+    height: 96px;
+    width: 96px;
+    background-color: red;
+}
+
+.flexContainer {
+    background-color: aqua;
+    display: flex;
+    flex-direction: row;
+    height: 128px;
+
+    align-items: center;
+    justify-content: space-around;
+
+    flex-wrap: wrap;
+
+
+}
+
+
+
+.row {
+    display: flex;
+    flex-direction: row;
+    background-color: gold;
+    padding: 8px;
+}
+
+.flex1 {
+    background-color: orangered;
+    height: 96px;
+    flex: 1;
+}
+
+.flex2 {
+    background-color: rgb(21, 255, 0);
+    height: 96px;
+    flex: 2;
+}
+
+.flex3 {
+    background-color: rgb(64, 0, 255);
+    height: 96px;
+    flex: 3;
+}
+
+
+.rowJustify {
+    display: flex;
+    flex-direction: row;
+    background-color: gold;
+    padding: 8px;
+    justify-content: space-between;
+}
+
+
+.positionElementAbsolute {
+    height: 96px;
+    width: 96px;
+    background-color: fuchsia;
+    border-radius: 50%;
+    position: absolute;
+    right: 50px;
+    bottom: 200px;
+}
+
+.positionElementRelative {
+    height: 96px;
+    width: 96px;
+    background-color: dodgerblue;
+    border-radius: 50%;
+    position: relative;
+    left: 200px;
+    bottom: 100px;
+}
+
+.positionElementFixed {
+    height: 96px;
+    width: 96px;
+    background-color: rgb(255, 30, 109);
+    border-radius: 50%;
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+}
+
+.stickyNav {
+    background-color: rgb(255, 0, 128);
+    height: 96px;
+    border-radius: 24px;
+    position: sticky;
+    top:0px
+}
+
+.chat{
+    background-color: forestgreen;
+    height: 96px;
+    width: 50%;
+    border-radius: 12px;
+    margin: 24px;
+    position: relative;
+}
+
+.notificacion{
+    background-color: red;
+    height: 24px;
+    width: fit-content;
+    min-width: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bolder;
+    border-radius: 24px;
+    font-size: small;
+    padding: 0px 2px;
+
+    position: absolute;
+    right: -12px;
+    top: -12px;
+
+
+}
