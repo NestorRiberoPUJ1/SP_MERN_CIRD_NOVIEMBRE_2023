@@ -1,0 +1,73 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+@media only screen and (max-width: 480px) {
+
+    .cartaContainer {
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+@media only screen and (min-width: 481px) {
+
+    .cartaContainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        column-gap: 8px;
+        row-gap: 8px;
+    }
+
+    .cartaMascota {
+        flex:1;
+        max-width: 50%;
+    }
+
+    .cartaMascota h3 {
+        font-size: small;
+    }
+
+    .cartaMascota p {
+        font-size: x-small;
+    }
+
+    .cartaMascota button {
+        font-size: x-small;
+    }
+}
+
+
+
+
+.cartaMascota {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 16px;
+    padding: 2px 16px;
+    box-sizing: border-box;
+    outline: 2px solid black;
+    height: 128px;
+}
+
+.cartaMascota>img {
+    height: 100%;
+}
+
+.cartaMascota2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 16px;
+    padding: 2px 16px;
+    box-sizing: border-box;
+    outline: 2px solid black;
+    height: 128px;
+}
+.cartaMascota2>img {
+    height: 100%;
+}
