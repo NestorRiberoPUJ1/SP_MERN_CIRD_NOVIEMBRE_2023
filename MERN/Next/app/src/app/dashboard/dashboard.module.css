@@ -1,0 +1,18 @@
+.layoutContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.leftNav {
+    height: 400px;
+    width: 200px;
+    background-color: lightcoral;
+    
+}
+
+.content {
+    min-height: 400px;
+    background-color: lightblue;
+    flex: 1;
+    padding: 24px;
+}
