@@ -14,7 +14,7 @@ module.exports.findAllUsuarios = async (req, res) => {
 };
 module.exports.findUsuario = async (req, res) => {
     try {
-        const usuario = await Usuario.findOne({ _id: req.params.id });
+        const usuario = await Usuario.findOne({ _id: req.params.id }).populate("cars");
         if (usuario) {
             res.status(200);
             res.json(usuario);
