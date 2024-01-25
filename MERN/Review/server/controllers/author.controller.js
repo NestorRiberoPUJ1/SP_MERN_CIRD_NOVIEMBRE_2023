@@ -14,7 +14,7 @@ module.exports.createAuthor = async (req, res) => {
 };
 module.exports.getAuthors = async (req, res) => {
     try {
-        const authors = await Author.find();
+        const authors = await Author.find().sort({ name: 1 });
         res.status(200);
         res.json(authors);
     } catch (error) {

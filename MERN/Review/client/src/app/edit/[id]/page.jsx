@@ -53,11 +53,22 @@ const EditPage = () => {
                     Home
                 </Link>
             </Typography>
-            <Typography variant="h5">
-                Edit This Author:
-            </Typography>
 
-            <AuthorForm onSubmit={updateAuthor} preset={author} />
+            {
+                author !== null ?
+                    <Fragment>
+                        <Typography variant="h5">
+                            Edit This Author:
+                        </Typography>
+                        <AuthorForm onSubmit={updateAuthor} preset={author} />
+                    </Fragment>
+                    :
+                    <Typography variant="h5">
+                        "Lo sentimos, pero no pudimos encontrar el autor que estás buscando.
+                        <Link href="/new">¿Deseas agregar este autor a nuestra base de datos?"</Link>
+                    </Typography>
+            }
+
 
 
         </Fragment>
