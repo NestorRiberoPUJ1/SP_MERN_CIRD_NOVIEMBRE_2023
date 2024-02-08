@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const User = require("../models/user.model");
-const { sendConfirmationEmail } = require("../config/email.config");
+const { sendConfirmationEmail, sendPasswordToken } = require("../config/email.config");
+const PasswordToken = require("../models/passwordToken.model");
+const { generateTempToken } = require("../util/generateToken");
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
@@ -128,6 +130,104 @@ module.exports.logout = async (req, res) => {
         res.status(200);
         res.json({ msg: 'Logout successful.' });
     } catch (error) {
-
+        res.status(500);
+        res.json({
+            errors: {
+                server: {
+                    message: error
+                }
+            }
+        });
     }
 };
+
+/* RESET PASSWORD */
+
+module.exports.passwordResetToken = async (req, res) => {
+    const { email } = req.query;
+    console.log(email);
+    try {
+        /* Buscamos si existe usuario con el email */
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            res.status(404);
+            res.json({ error: "User not found" });
+            return;
+        }
+        /* Buscamos si ese usuario que si existe ya tiene un token */
+        const token = await PasswordToken.findOne({ user: user._id });
+        console.log(token);
+        /* Si tiene Token lo eliminamos */
+        if (token) {
+            await PasswordToken.deleteOne({ _id: token._id });
+        }
+        /* Generacion Token */
+        const rawToken = generateTempToken(6);
+        const newToken = await PasswordToken.create({ token: rawToken, user: user._id, valid: true });
+        const emailToken = await sendPasswordToken({ user: user, token: rawToken });
+        /* console.log(emailToken); */
+        res.status(200);
+        res.json(newToken);
+    } catch (error) {
+        res.status(500);
+        res.json({
+            errors: {
+                server: {
+                    message: error
+                }
+            }
+        });
+    }
+}
+
+module.exports.passwordReset = async (req, res) => {
+    const { email, password, confirmPassword, token } = req.body;
+    const data = {
+        password, confirmPassword
+    }
+    console.log(email, password, confirmPassword, token);
+    try {
+        /* Busca el usuario por email */
+        const user = await User.findOne({ email: email });
+        /* Si no existe finaliza */
+        if (!user) {
+            res.status(404);
+            res.json({ error: "User not found" });
+            return;
+        }
+        /* Busca si el usuario tiene token activo */
+        const activeToken = await PasswordToken.findOne({ user: user._id });
+        console.log(token);
+        /* Si no hay token o el token ya no es válido */
+        if (!activeToken || !activeToken.valid) {
+            res.status(401);
+            res.json({ error: "Token Expired" });
+            return;
+        }
+        /* Valida el token ingresado con el hash de la DB */
+        const validate = await bcrypt.compare(token, activeToken.token);
+        /* Si no concuerdan, Finaliza */
+        if (!validate) {
+            res.status(401);
+            res.json({ error: "Invalid Token" });
+            return;
+        }
+
+        /* Actualizacion de contraseña */
+        const userPatch = await User.findOneAndUpdate({ email: email }, data, { new: true, runValidators: true });
+       /* Quema el token ( lo vuelve inválido) */
+        const tokenPatch = await PasswordToken.findOneAndUpdate({ user: user._id }, { valid: false }, { new: true, runValidators: true });
+        console.log(tokenPatch);
+        res.status(200);
+        res.json(userPatch);
+    } catch (error) {
+        res.status(500);
+        res.json({
+            errors: {
+                server: {
+                    message: error
+                }
+            }
+        });
+    }
+}
