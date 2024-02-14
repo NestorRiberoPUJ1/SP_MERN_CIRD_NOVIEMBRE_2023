@@ -14,7 +14,8 @@ import generateKey from '@/utils/generateKey';
 import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, ListItemAvatar, Typography } from '@mui/material';
 import { stringAvatar } from '@/utils/avatarUtils';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { getChats, getUsers } from '@/app/api/route';
 
 const drawerWidth = 350;
 
@@ -37,9 +38,15 @@ const configOptions = [
 ]
 
 const ChatItem = ({ item }) => {
+    const router = useRouter();
+
+    const navTo = (url) => {
+        router.push(url);
+    }
+
     return (
         <ListItem disablePadding
-            onClick={() => navTo(item.url)}
+            onClick={() => navTo(`/chat/${item._id}`)}
             sx={{ borderBottom: "1px solid lightGray" }}
         >
             <ListItemButton alignItems="flex-start">
@@ -86,6 +93,8 @@ const ChatsDrawer = () => {
     const pathname = usePathname();
     const router = useRouter();
 
+    const [chats, setChats] = useState([])
+
     const navTo = (url) => {
         router.push(url);
     }
@@ -94,6 +103,21 @@ const ChatsDrawer = () => {
     const isActive = (refPath) => {
         return pathname === refPath;
     }
+
+
+    const handleGetChats = async () => {
+        try {
+            const response = await getChats();
+            console.log(response);
+            setChats(response);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        handleGetChats();
+    }, [])
 
     return (
         <Drawer
@@ -114,7 +138,7 @@ const ChatsDrawer = () => {
                         <Typography variant='h6' textAlign={"center"} sx={{ fontWeight: "bolder" }}>Chats</Typography>
                     </ListItem>
                     <Divider />
-                    {menuOptions.map((item, idx) => (
+                    {chats.map((item, idx) => (
                         <Fragment key={generateKey(idx)}>
                             <ChatItem item={item} />
                         </Fragment>
@@ -124,7 +148,7 @@ const ChatsDrawer = () => {
             <Divider sx={{ mt: "auto" }} />
             <Box sx={{ overflow: 'auto' }}>
                 <List>
-                    {configOptions.map((item,idx) => (
+                    {configOptions.map((item, idx) => (
                         <ListItem key={generateKey(idx)} disablePadding
                             sx={{
                                 bgcolor: isActive(item.url) ? primary.light : "inherit",

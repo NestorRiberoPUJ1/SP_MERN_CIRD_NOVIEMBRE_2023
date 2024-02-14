@@ -1,19 +1,18 @@
 require('dotenv').config()
 const express = require('express');
 /* NEW FOR SOCKET IO */
-/* import { createServer } from "http"; */
-
 const { createServer } = require('http');
+const { socketInit } = require('./config/socket.config');
 
-const { Server } = require("socket.io");
 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const app = express();
 const port = 8000;
 
+/* NEW FOR SOCKET IO */
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+
 
 require('./config/mongoose.config');
 
@@ -23,13 +22,21 @@ app.use(cookieParser());
 app.use(
     cors({
         credentials: true,
-        origin: ["http://localhost:3000"]
+        origin: ["http://localhost:3000","https://3w908qbl-3000.use2.devtunnels.ms"]
     })
 )
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+/* WEBSOCKET */
+const socketIO = socketInit(httpServer);
+/* El uso del socket dentro de las rutas */
+app.use((req, res, next) => {
+    req.io = socketIO;
+    return next();
+});
 
 app.use(express.static('public'));
 
@@ -41,27 +48,9 @@ app.use("/api/session", sessionRoutes);
 const userRoutes = require('./routes/user.routes');
 app.use("/api/user", userRoutes);
 
-io.on('connection', (socket) => {
-    console.log('socket connected', socket.id);
+const chatRoutes = require('./routes/chat.routes');
+app.use("/api/chat", chatRoutes);
 
-});
-
-io.of("/admin").on("connection", (socket) => {
-    console.log('Admin socket connected', socket.id);
-});
-
-const manager = io.of("/chat").on("connection", (socket) => {
-    console.log('Chat socket connected', socket.id);
-    socket.broadcast.emit("join","new chat member");
-    
-    socket.on("join", function (roomid) {
-        console.log('Chat socket connected', roomid);
-        socket.join(roomid);
- 
-        manager.to(roomid).emit('testsocket', "connected to " + roomid);
-        socket.to(roomid).emit('testsocket',`${socket.id} joined the chat`);
-    });
-});
 
 httpServer.listen(port, () => console.log(`Listening on port: ${port}`));
 

@@ -1,5 +1,5 @@
 'use client'
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,6 +14,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from 'next/link';
 import { login } from '@/app/api/route';
+import { useCookies } from 'next-client-cookies';
+import { useAppDispatch } from '@/lib/hooks';
+import { setUser, userLogin } from '@/lib/features/users/userSlice';
+import { useRouter } from 'next/navigation';
 
 
 /*  TODO:
@@ -23,11 +27,14 @@ import { login } from '@/app/api/route';
 
 
 const Copyright = (props) => {
+
+
+
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
             <Link color="inherit" href="https://mui.com/">
-                Your Website
+                My Domain
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -38,6 +45,11 @@ const Copyright = (props) => {
 
 const LoginForm = () => {
 
+    const cookies = useCookies();
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
@@ -47,7 +59,12 @@ const LoginForm = () => {
         }
         try {
             const result = await login(data);
+            cookies.set("userToken", result.token);
             console.log(result);
+            dispatch(userLogin());
+            dispatch(setUser(result.user));
+            router.push("/");
+
         } catch (error) {
             console.log(error);
         }

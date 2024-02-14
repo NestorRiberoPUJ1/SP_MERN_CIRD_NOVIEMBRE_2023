@@ -23,8 +23,10 @@ module.exports.createUser = async (req, res) => {
     }
 };
 module.exports.findAllUsers = async (req, res) => {
+    const { base } = req.query;
+    let includes = base ? "" : "email firstName lastName _id";
     try {
-        const users = await User.find();
+        const users = await User.find().select(includes);
         res.status(200);
         res.json(users);
     } catch (error) {
@@ -106,11 +108,22 @@ module.exports.login = async (req, res) => {
         const newJWT = jwt.sign({
             _id: user._id,
             level: user.level
-        }, secretKey, { expiresIn: '10m' });
+        }, secretKey, { expiresIn: '10y' });
 
-        res.cookie("userToken", newJWT, { httpOnly: true });
+        res.cookie("userToken", newJWT, {
+            /* domain: "testdomain.com", */
+            /* httpOnly: true */
+        });
         res.status(200);
-        res.json({ msg: "logged ok" });
+        const rsUser = {
+            _id: user._id,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName
+        }
+
+
+        res.json({ user: rsUser, token: newJWT });
     }
 
     catch (error) {
@@ -215,7 +228,7 @@ module.exports.passwordReset = async (req, res) => {
 
         /* Actualizacion de contraseña */
         const userPatch = await User.findOneAndUpdate({ email: email }, data, { new: true, runValidators: true });
-       /* Quema el token ( lo vuelve inválido) */
+        /* Quema el token ( lo vuelve inválido) */
         const tokenPatch = await PasswordToken.findOneAndUpdate({ user: user._id }, { valid: false }, { new: true, runValidators: true });
         console.log(tokenPatch);
         res.status(200);

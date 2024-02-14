@@ -1,8 +1,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import TopNav from "@/components/navs/TopNav";
-import { Box, CssBaseline } from "@mui/material";
-import ChatsDrawer from "@/components/chat/ChatsDrawer";
+
+import { CookiesProvider } from 'next-client-cookies/server';
+import StoreProvider from "./StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +16,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TopNav />
-          {children}
+        <StoreProvider>
+          <CookiesProvider>
+            <TopNav />
+            {children}
+          </CookiesProvider>
+        </StoreProvider>
       </body>
     </html>
   );
