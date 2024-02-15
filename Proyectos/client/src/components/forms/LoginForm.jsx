@@ -59,6 +59,7 @@ const LoginForm = () => {
         }
         try {
             const result = await login(data);
+            /* Set manual de la cookie */
             cookies.set("userToken", result.token);
             console.log(result);
             dispatch(userLogin());

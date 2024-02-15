@@ -1,5 +1,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+/* IMPORTACION ESTILO MUY IMPORTANTE!!!!!!!!! */
+import 'mapbox-gl/dist/mapbox-gl.css'
+import 'maplibre-gl/dist/maplibre-gl.css'
+
 import TopNav from "@/components/navs/TopNav";
 
 import { CookiesProvider } from 'next-client-cookies/server';

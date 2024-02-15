@@ -10,6 +10,7 @@ const nextConfig = {
         REACT_APP_IMG_DOMAIN: "https://3w908qbl-8000.use2.devtunnels.ms/img",
         REACT_APP_SOCKET_DOMAIN: "https://3w908qbl-8000.use2.devtunnels.ms",
     },
+    transpilePackages: ['@mui/x-charts']
 };
 
 export default nextConfig;
