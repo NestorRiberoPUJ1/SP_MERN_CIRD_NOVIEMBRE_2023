@@ -18,7 +18,7 @@ router.get("/:id", authenticate, chatController.getChatMessages);
 //router.delete("/:id", /* authenticate, */ chatController.deleteUser);
 
 /* Rutas de mensajes */
-router.post("/message", authenticate, chatController.sendMessage);
+router.post("/message", authenticate, upload.single('img'), chatController.sendMessage);
 router.post("/media", authenticate, upload.single('img'), chatController.sendMedia);
 
 

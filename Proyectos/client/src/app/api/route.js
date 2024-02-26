@@ -137,3 +137,15 @@ export function getChatByMembers(_id) {
         }
     });
 }
+export function sendMessageMedia(data) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_DOMAIN}/chat/media`, data, { withCredentials: true });
+            const result = await response.data;
+            resolve(result);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+}

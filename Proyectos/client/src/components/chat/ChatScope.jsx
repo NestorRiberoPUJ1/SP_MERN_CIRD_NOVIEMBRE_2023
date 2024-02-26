@@ -6,35 +6,41 @@ import { Fragment, useEffect, useState } from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { stringAvatar } from "@/utils/avatarUtils";
-import { sendMessage } from "@/app/api/route";
+import { sendMessage, sendMessageMedia } from "@/app/api/route";
 import { io } from "socket.io-client";
 
 import { useCookies } from 'next-client-cookies';
 import Message from "./Message";
 import generateKey from "@/utils/generateKey";
-import { jwtDecode } from "jwt-decode";
+import { MuiFileInput } from "mui-file-input";
+
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 
 const ChatScope = (props) => {
 
     const [newMessages, setNewMessages] = useState([]);
     const [content, setContent] = useState("");
+    const [file, setFile] = useState(null);
     const cookies = useCookies();
 
+
+    const handleFileChange = (newFile) => {
+        setFile(newFile)
+    }
 
     const handleSendMessage = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const data = {
-            content: formData.get('content'),
-            chatId: props._id,
-        }
+        formData.append("chatId",props._id);
+        console.log(formData.get("img"))
         if (props.memberId) {
-            data.memberId = props.memberId;
+            formData.append("memberId",props.memberId);
         }
-        console.log(data);
+        console.log(formData.get("content"));
         try {
-            const result = await sendMessage(data);
+            const result = await sendMessage(formData);
+            /* const result = await sendMessageMedia(formData); */
             console.log(result);
         } catch (error) {
             console.log(error);
@@ -109,7 +115,24 @@ const ChatScope = (props) => {
                 </CardContent>
 
                 <CardActions sx={{ pl: 2 }}>
-                    <Box component="form" onSubmit={handleSendMessage} sx={{ width: "100%", display: "flex" }} >
+
+                    <Box component="form" onSubmit={handleSendMessage} sx={{ width: "100%", display: "flex", alignItems: "start" }} >
+                        <MuiFileInput
+                            value={file}
+                            onChange={handleFileChange}
+                            hideSizeText
+                            InputProps={{
+                                inputProps: {
+                                    accept: 'img/*'
+                                },
+                                startAdornment: <AttachFileIcon />
+                            }}
+                            size="small"
+                            
+                            margin="none"
+                            variant="outlined"
+                            name="img"
+                        />
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -119,6 +142,7 @@ const ChatScope = (props) => {
                             name="content"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
+                            multiline
                         />
                         <IconButton type="submit" sx={{ ml: 2 }}>
                             <SendIcon />

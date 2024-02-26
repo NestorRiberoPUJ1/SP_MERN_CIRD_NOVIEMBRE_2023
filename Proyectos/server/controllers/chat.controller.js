@@ -53,6 +53,18 @@ exports.sendMessage = async (req, res) => {
             res.json({ error: 'Chat not found' });
             return
         }
+        const path = `${process.env.UPLOADS_FOLDER}/${chat._id}`;
+        fs.mkdirsSync(path);
+
+        // Use JSON.stringify to serialize here.
+        fs.writeFile(`${path}/mario.png`, req.file.buffer, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log("The file was saved!");
+        });
+
+
         chat.messages.push({ sender, content });
         await chat.save();
         res.status(201)
@@ -116,8 +128,6 @@ exports.getChayByMembers = async (req, res) => {
         res.json(error);
     }
 };
-
-
 
 exports.sendMedia = async (req, res) => {
     try {

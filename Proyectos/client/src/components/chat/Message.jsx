@@ -45,7 +45,7 @@ const incomingTriangleStyle = {
 const Message = ({ content, sender }) => {
     const currentUser = useAppSelector(selectUser);
     const myMessage = sender._id === currentUser._id;
-    console.log(currentUser);
+
 
 
     return (
