@@ -23,10 +23,21 @@ module.exports.createUser = async (req, res) => {
     }
 };
 module.exports.findAllUsers = async (req, res) => {
-    const { base } = req.query;
+    const { base, exclude } = req.query;
+    console.log(req.query);
+    const query = {};
+    if (exclude) {
+        console.log("EXCLUDING");
+        query._id = {
+            $ne: req.user
+        }
+    }
+    console.log(query);
+
+
     let includes = base ? "" : "email firstName lastName _id";
     try {
-        const users = await User.find().select(includes);
+        const users = await User.find(query).select(includes);
         res.status(200);
         res.json(users);
     } catch (error) {

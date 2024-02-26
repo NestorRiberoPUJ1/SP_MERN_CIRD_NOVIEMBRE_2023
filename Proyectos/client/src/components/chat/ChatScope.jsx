@@ -29,6 +29,9 @@ const ChatScope = (props) => {
             content: formData.get('content'),
             chatId: props._id,
         }
+        if (props.memberId) {
+            data.memberId = props.memberId;
+        }
         console.log(data);
         try {
             const result = await sendMessage(data);

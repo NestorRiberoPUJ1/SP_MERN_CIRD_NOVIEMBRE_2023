@@ -1,0 +1,2 @@
+-Para compilar plantillas
+handlebars .\billing.hbs -f billing.precompiled.js -c handlebars/runtime

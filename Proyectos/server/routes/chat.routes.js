@@ -3,7 +3,12 @@ const router = express.Router();
 
 const chatController = require('../controllers/chat.controller');
 const { authenticate } = require('../config/jwt.config');
+const { upload } = require('../config/multer.config');
 
+
+
+/* Buscador de chats */
+router.get("/find", authenticate, chatController.getChayByMembers);
 
 /* Rutas Basicas del CRUD */
 router.post("", authenticate, chatController.createChat);
@@ -14,6 +19,9 @@ router.get("/:id", authenticate, chatController.getChatMessages);
 
 /* Rutas de mensajes */
 router.post("/message", authenticate, chatController.sendMessage);
+router.post("/media", authenticate, upload.single('img'), chatController.sendMedia);
+
+
 
 
 module.exports = router;

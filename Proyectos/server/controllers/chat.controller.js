@@ -1,7 +1,7 @@
 const Chat = require("../models/chat.model");
 const { sendMultiple } = require("../util/socketFunctions");
 
-
+const fs = require('fs-extra');
 
 exports.createChat = async (req, res) => {
     try {
@@ -37,9 +37,17 @@ exports.getAllChats = async (req, res) => {
 // Controller function to send a message to a chat
 exports.sendMessage = async (req, res) => {
     try {
-        const { chatId, content } = req.body;
+        const { chatId, content, memberId } = req.body;
+        console.log(req.body);
+        let chat
+        if (chatId === "NewChat") {
+            console.log("CREATING CHAT");
+            chat = await Chat.create({ members: [req.user, memberId] });
+        } else {
+            chat = await Chat.findById(chatId);
+        }
         const sender = req.user;
-        const chat = await Chat.findById(chatId);
+
         if (!chat) {
             res.status(404);
             res.json({ error: 'Chat not found' });
@@ -50,10 +58,11 @@ exports.sendMessage = async (req, res) => {
         res.status(201)
         res.json(chat.messages);
         /* SOCKET */
-        sendMultiple(req.io,"/chat",chat.messages.at(-1),chat.members);
-        
+        sendMultiple(req.io, "/chat", chat.messages.at(-1), chat.members);
+
     } catch (error) {
         res.status(500);
+        console.log(error);
         res.json({ error: 'Could not send message' });
     }
 };
@@ -78,3 +87,76 @@ exports.getChatMessages = async (req, res) => {
         res.json(error);
     }
 };
+
+// Controller function to find if a chat already exist
+exports.getChayByMembers = async (req, res) => {
+    console.log(req.query._id);
+    if (req.user === req.query._id) {
+        res.status(500);
+        res.json({ error: 'Chat not found' });
+        return
+    }
+    const searchOptions = { members: { $all: [req.user, req.query._id] } };
+    try {
+        const { id } = req.params;
+        console.log(id, req.user);
+        const chat = await Chat.findOne(searchOptions);
+        if (!chat) {
+            res.status(404);
+            res.json({ error: 'Chat not found' });
+            return
+        }
+        const aux = { ...chat._doc };
+        const otherMember = aux.members.find((item) => item.id !== req.user);
+        aux.firstName = otherMember.firstName;
+        aux.lastName = otherMember.lastName;
+        res.json(aux);
+    } catch (error) {
+        res.status(500);
+        res.json(error);
+    }
+};
+
+
+
+exports.sendMedia = async (req, res) => {
+    try {
+        const { chatId, memberId } = req.body;
+        console.log(req.body);
+        let chat
+        if (chatId === "NewChat") {
+            console.log("CREATING CHAT");
+            chat = await Chat.create({ members: [req.user, memberId] });
+        } else {
+            chat = await Chat.findById(chatId);
+        }
+        const sender = req.user;
+
+        if (!chat) {
+            res.status(404);
+            res.json({ error: 'Chat not found' });
+            return
+        }
+        const path = `${process.env.UPLOADS_FOLDER}/${chat._id}`;
+        fs.mkdirsSync(path);
+
+        // Use JSON.stringify to serialize here.
+        fs.writeFile(`${path}/file.png`, req.file.buffer, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log("The file was saved!");
+        });
+        /* chat.messages.push({ sender, content });
+        await chat.save(); */
+        res.status(201)
+        res.json(chat.messages);
+        /* SOCKET */
+        /* sendMultiple(req.io, "/chat", chat.messages.at(-1), chat.members); */
+
+    } catch (error) {
+        res.status(500);
+        console.log(error);
+        res.json({ error: 'Could not send message' });
+    }
+}

@@ -5,6 +5,9 @@ const { createServer } = require('http');
 const { socketInit } = require('./config/socket.config');
 
 
+/* PDF */
+
+
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -38,7 +41,12 @@ app.use((req, res, next) => {
     return next();
 });
 
+/* PDF */
+
+
+/* Archivos estáticos */
 app.use(express.static('public'));
+
 
 
 
@@ -50,6 +58,9 @@ app.use("/api/user", userRoutes);
 
 const chatRoutes = require('./routes/chat.routes');
 app.use("/api/chat", chatRoutes);
+
+const billingRoutes = require('./routes/billing.routes');
+app.use("/api/billing", billingRoutes);
 
 
 httpServer.listen(port, () => console.log(`Listening on port: ${port}`));

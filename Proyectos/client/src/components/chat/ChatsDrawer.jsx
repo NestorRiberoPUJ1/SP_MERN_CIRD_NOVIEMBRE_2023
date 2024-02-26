@@ -11,11 +11,11 @@ import ListItemText from '@mui/material/ListItemText';
 
 
 import generateKey from '@/utils/generateKey';
-import { usePathname, useRouter } from 'next/navigation';
-import { Avatar, ListItemAvatar, Typography } from '@mui/material';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Autocomplete, Avatar, ListItemAvatar, Stack, TextField, Typography } from '@mui/material';
 import { stringAvatar } from '@/utils/avatarUtils';
 import { Fragment, useEffect, useState } from 'react';
-import { getChats, getUsers } from '@/app/api/route';
+import { getChatByMembers, getChats, getUsers } from '@/app/api/route';
 
 const drawerWidth = 350;
 
@@ -34,9 +34,7 @@ const menuOptions = [
     },
 ]
 const configOptions = [
-
 ]
-
 const ChatItem = ({ item }) => {
     const router = useRouter();
 
@@ -88,23 +86,25 @@ const ChatItem = ({ item }) => {
     )
 }
 
+
+
+
 const ChatsDrawer = () => {
 
     const pathname = usePathname();
     const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const [chats, setChats] = useState([])
+    const [chats, setChats] = useState([]);
+    const [newChat, setNewChat] = useState(null);
+    const [chatOpts, setChatOpts] = useState([]);
 
     const navTo = (url) => {
         router.push(url);
     }
-
-
     const isActive = (refPath) => {
         return pathname === refPath;
     }
-
-
     const handleGetChats = async () => {
         try {
             const response = await getChats();
@@ -114,8 +114,40 @@ const ChatsDrawer = () => {
             console.log(error);
         }
     }
+    const handleGetAvailableUsers = async () => {
+        try {
+            const response = await getUsers({ base: true, exclude: true });
+            console.log(response);
+            setChatOpts(response);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleNewChat = async (chatMember) => {
+        setNewChat(chatMember);
+        if (chatMember !== null) {
+            console.log(chatMember);
+            const params = new URLSearchParams(searchParams);
+            Object.keys(chatMember).forEach((key) => {
+                params.set(key, chatMember[key]);
+            });
+            try {
+                const result = await getChatByMembers(chatMember._id);
+                console.log(result);
+                router.push(`/chat/${result._id}`);
+            } catch (error) {
+                console.log(error);
+                if (error.response.status == 404) {
+                    router.push(`/chat?${params.toString()}`);
+                }
+            }
+        }
+    }
+
 
     useEffect(() => {
+        handleGetAvailableUsers();
         handleGetChats();
     }, [])
 
@@ -135,7 +167,20 @@ const ChatsDrawer = () => {
 
                 <List>
                     <ListItem>
-                        <Typography variant='h6' textAlign={"center"} sx={{ fontWeight: "bolder" }}>Chats</Typography>
+                        <Stack sx={{ width: "100%" }} direction="row" alignItems="center" spacing={2}>
+                            <Typography variant='h6' textAlign={"center"} sx={{ fontWeight: "bolder" }}>Chats</Typography>
+                            <Autocomplete
+                                value={newChat}
+                                onChange={(event, newValue) => {
+                                    handleNewChat(newValue)
+                                }}
+                                options={chatOpts}
+                                fullWidth
+                                size="small"
+                                renderInput={(params) => <TextField {...params} placeholder='Buscar Chat' />}
+                                getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                            />
+                        </Stack>
                     </ListItem>
                     <Divider />
                     {chats.map((item, idx) => (

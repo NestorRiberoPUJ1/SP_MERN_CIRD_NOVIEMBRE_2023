@@ -74,10 +74,10 @@ export function passwordReset(data) {
         }
     });
 }
-export function getUsers() {
+export function getUsers(params) {
     return new Promise(async (resolve, reject) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_DOMAIN}/user`, { withCredentials: true });
+            const response = await axios.get(`${process.env.REACT_APP_API_DOMAIN}/user`, { withCredentials: true, params: params });
             const result = await response.data;
             resolve(result);
         } catch (error) {
@@ -117,6 +117,18 @@ export function sendMessage(data) {
     return new Promise(async (resolve, reject) => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_DOMAIN}/chat/message`, data, { withCredentials: true });
+            const result = await response.data;
+            resolve(result);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+}
+export function getChatByMembers(_id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_DOMAIN}/chat/find`, { withCredentials: true, params: { _id: _id } });
             const result = await response.data;
             resolve(result);
         } catch (error) {
