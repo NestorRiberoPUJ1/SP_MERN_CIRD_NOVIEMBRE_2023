@@ -47,9 +47,14 @@ const TopNav = () => {
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="div" >
                     <Link href={"/"} style={{ color: "white", textDecoration: "none" }}>
                         Proyecto Uno
+                    </Link>
+                </Typography>
+                <Typography variant="body2" component="div" sx={{ ml: 4, flexGrow: 1 }} >
+                    <Link href={"/calendar"} style={{ color: "white", textDecoration: "none" }}>
+                        Calendario
                     </Link>
                 </Typography>
                 {

@@ -1,4 +1,5 @@
 const Chat = require("../models/chat.model");
+const { addSufix } = require("../util/fileRename");
 const { sendMultiple } = require("../util/socketFunctions");
 
 const fs = require('fs-extra');
@@ -53,19 +54,27 @@ exports.sendMessage = async (req, res) => {
             res.json({ error: 'Chat not found' });
             return
         }
-        const path = `${process.env.UPLOADS_FOLDER}/${chat._id}`;
-        fs.mkdirsSync(path);
 
-        // Use JSON.stringify to serialize here.
-        fs.writeFile(`${path}/mario.png`, req.file.buffer, function (err) {
-            if (err) {
-                return console.log(err);
+        let messageData = { sender, content };
+        if (req.file) {
+            const path = `${process.env.UPLOADS_FOLDER}/${chat._id}`;
+            fs.mkdirsSync(path);
+
+            const fileName = req.file.originalname.split(".")[0];
+            const fileExtension = req.file.mimetype.split("/")[1];
+            const uniqueName = `${addSufix(fileName)}.${fileExtension}`;
+
+            // Use JSON.stringify to serialize here.
+            try {
+                fs.writeFileSync(`${path}/${uniqueName}`, req.file.buffer);
+                console.log("The file was saved!");
+                messageData.media = `${chat._id}/${uniqueName}`;
+            } catch (error) {
+                console.log(err);
             }
-            console.log("The file was saved!");
-        });
+        }
 
-
-        chat.messages.push({ sender, content });
+        chat.messages.push(messageData);
         await chat.save();
         res.status(201)
         res.json(chat.messages);
@@ -149,9 +158,12 @@ exports.sendMedia = async (req, res) => {
         }
         const path = `${process.env.UPLOADS_FOLDER}/${chat._id}`;
         fs.mkdirsSync(path);
-
         // Use JSON.stringify to serialize here.
-        fs.writeFile(`${path}/file.png`, req.file.buffer, function (err) {
+        const fileName = req.file.originalname.split(".")[0];
+        const fileExtension = req.file.mimetype.split("/")[1];
+        const uniqueName = `${addSufix(fileName)}.${fileExtension}`;
+
+        fs.writeFile(`${path}/${uniqueName}`, req.file.buffer, function (err) {
             if (err) {
                 return console.log(err);
             }

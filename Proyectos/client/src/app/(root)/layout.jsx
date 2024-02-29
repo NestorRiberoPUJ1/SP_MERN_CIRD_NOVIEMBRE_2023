@@ -2,7 +2,7 @@ import ChatsDrawer from "@/components/chat/ChatsDrawer";
 import { Box, CssBaseline, Toolbar } from "@mui/material";
 
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children ,modal}) => {
 
 
 
@@ -15,6 +15,7 @@ const MainLayout = ({ children }) => {
                 <Toolbar />
                 <Box sx={{ flex: 1 }}>
                     {children}
+                    {modal}
                 </Box>
             </Box>
         </Box>

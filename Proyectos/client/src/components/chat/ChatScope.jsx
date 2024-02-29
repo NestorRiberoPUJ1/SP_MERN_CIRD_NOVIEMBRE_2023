@@ -47,6 +47,7 @@ const ChatScope = (props) => {
         }
 
         setContent("");
+        setFile(null);
     }
 
 

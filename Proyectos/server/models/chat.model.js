@@ -13,6 +13,10 @@ const MessageSchema = new mongoose.Schema({
     content: {
         type: String,
         defaultValue: ""
+    },
+    media: {
+        type: String,
+        required: false,
     }
 
 

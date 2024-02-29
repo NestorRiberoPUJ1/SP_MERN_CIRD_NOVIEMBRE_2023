@@ -46,6 +46,7 @@ app.use((req, res, next) => {
 
 /* Archivos estáticos */
 app.use(express.static('public'));
+app.use("/img",express.static('uploads'));
 
 
 

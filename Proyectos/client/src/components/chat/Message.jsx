@@ -7,7 +7,7 @@ import { Fragment } from "react"
 
 const outgoingStyle = {
     bgcolor: "#cfe7e8",
-    width: "80%",
+    maxWidth: "80%",
     alignSelf: "end",
     position: "relative",
     borderRadius: "8px 8px 0px 8px",
@@ -15,7 +15,7 @@ const outgoingStyle = {
 }
 const incomingStyle = {
     bgcolor: "white",
-    width: "80%",
+    maxWidth: "80%",
     alignSelf: "start",
     position: "relative",
     borderRadius: "8px 8px 8px 0px",
@@ -42,7 +42,7 @@ const incomingTriangleStyle = {
     left: -4
 }
 
-const Message = ({ content, sender }) => {
+const Message = ({ content, sender, media }) => {
     const currentUser = useAppSelector(selectUser);
     const myMessage = sender._id === currentUser._id;
 
@@ -53,6 +53,17 @@ const Message = ({ content, sender }) => {
             <Box sx={myMessage ? outgoingStyle : incomingStyle} >
                 <Box sx={myMessage ? outgoingTriangleStyle : incomingTriangleStyle} />
                 {/* <Typography>You:</Typography> */}
+                {
+                    media &&
+                    <Box sx={{ height: 300, width: "100%" }}>
+                        <img
+                            style={{ maxHeight: "100%", maxWidth: "100%" }}
+                            src={`${process.env.REACT_APP_IMG_DOMAIN}/${media}`}
+                            alt="mediaIMG"
+                        />
+                    </Box>
+                }
+
                 <Typography variant="body2">{content}</Typography>
 
             </Box>
